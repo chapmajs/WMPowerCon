@@ -11,3 +11,6 @@
 
 # No object files!
 *.o
+
+#ignore the binary too
+wmpowercon
