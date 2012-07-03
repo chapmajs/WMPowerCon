@@ -42,6 +42,7 @@
 #include "../wmgeneral/wmgeneral.h"
 #include "wmapm_master.xpm"
 #include "wmapm_mask.xbm"
+#include "linux_acpi.h"
 
 void displayTime(int time_in_minutes);
 void displayGraph(int percent);
@@ -57,8 +58,8 @@ int main(int argc, char *argv[]) {
   // BEGIN hardcoded test params
   int     ac_line_status     = 1;
   int     battery_status     = 3;   // Battery charging, 2 = critical, 1 = low, 3 = charged
-  int     battery_time       = 240; // Remaining time in minutes
-  int     battery_percentage = 75;
+  int     battery_time       = 2000; // Remaining time in minutes
+  int     battery_percentage = 0;
   // END hardcoded test params
 
   XEvent  event;
@@ -67,10 +68,14 @@ int main(int argc, char *argv[]) {
   openXwindow(argc, argv, wmapm_master, wmapm_mask_bits, wmapm_mask_width, wmapm_mask_height);
 
   while (1) {
+    battery_info res = get_battery_info(fopen("/sys/class/power_supply/BAT1/uevent", "r"));
+
+    displayGraph(res.percent);
+    displayChargeStatus(!res.discharging);
     displayTime(battery_time);
-    displayGraph(battery_percentage);
-    displayChargeStatus(ac_line_status);
     displayLeds(1, 1, 1); 
+
+    battery_percentage == 100 ? (battery_percentage = 0) : (battery_percentage++);
 
     // Process pending X events
     while (XPending(display)) {

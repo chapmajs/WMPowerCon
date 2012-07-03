@@ -5,7 +5,8 @@ DESTDIR= /usr/X11R6
 LIBDIR = -L/usr/X11R6/lib
 LIBS   = -lXpm -lX11 -lXext
 OBJS   = wmpowercon.o \
-         ../wmgeneral/wmgeneral.o
+         ../wmgeneral/wmgeneral.o\
+         linux_acpi.o
 
 .c.o:
 	$(CC) $(COPTS) -D$(shell echo `uname -s`) -c $< -o $*.o $(INCDIR)
