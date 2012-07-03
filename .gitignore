@@ -1,0 +1,13 @@
+# mac stuff
+.DS_Store
+
+# emacs stuff
+*~
+\#*
+
+# editor temp files
+*.swp
+*~
+
+# No object files!
+*.o
