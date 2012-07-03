@@ -1,0 +1,19 @@
+Installation instructions for WMPowerCon.
+
+Requirements
+-------------------------------------------------------------------------------
+  WMPowerCon requires the Xpm library (which should be available on most 
+  machines with XFree86 installed). In order to compile WMPowerCon using the
+  Makefile, GNU make must be used (FreeBSD users, the default BSD 'make' does
+  not work).
+
+Installation
+-------------------------------------------------------------------------------
+1) % git clone git@github.com:chapmajs/WMPowerCon.git
+2) % cd WMPowerCon/wmpowercon
+3) % make (or gmake on most *BSD systems)
+4) % make install (must be root) or simply copy and binary (and
+     optionally the man page) to a directory in your path.
+     (Makefile does an suid on apm; you must be root to do this.)
+5) % wmpowercon & (or 'wmpowercon -h' for help, or 'man wmpowercon' for the man
+     page)
