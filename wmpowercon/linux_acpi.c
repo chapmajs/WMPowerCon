@@ -3,11 +3,11 @@
 #include "linux_acpi.h"
 
 battery_info get_battery_info(FILE *sysfs_bat_fp) {
-  battery_info results = {0, 0};
+  battery_info results = {0, 0, 0};
 
   int full_charge, current_charge;
   long fileLen;
-  char *buf, *line, *delimiter = "\n";
+  char *buf, *line;
   char charging_state[64];
 
   // Read the file into a char buffer
@@ -18,7 +18,7 @@ battery_info get_battery_info(FILE *sysfs_bat_fp) {
   buf = calloc(fileLen + 1, sizeof(char));
   fread(buf, fileLen, 1, sysfs_bat_fp);
   line = calloc(255, sizeof(char));
-  line = strtok( buf, delimiter );
+  line = strtok( buf, "\n" );
 
   while (line != NULL) {
     if (strncmp(line, "POWER_SUPPLY_CHARGE_FULL=", 25) == 0)
@@ -30,9 +30,10 @@ battery_info get_battery_info(FILE *sysfs_bat_fp) {
     if (strncmp(line, "POWER_SUPPLY_STATUS=", 20) == 0) {
       sscanf(line, "POWER_SUPPLY_STATUS=%63s", charging_state);
       results.discharging = !strcmp(charging_state, "Discharging");
+      results.full = !strcmp(charging_state, "Full");
     }
 
-    line = strtok( NULL, delimiter );
+    line = strtok( NULL, "\n" );
   }
 
   results.percent = (current_charge / (double)full_charge) * 100;

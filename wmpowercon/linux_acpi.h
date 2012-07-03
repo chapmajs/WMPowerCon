@@ -3,6 +3,7 @@
 
 typedef struct {
   int discharging;
+  int full;
   int percent;
 } battery_info;
 

@@ -46,36 +46,32 @@
 
 void displayTime(int time_in_minutes);
 void displayGraph(int percent);
-void displayChargeStatus(int ac_line_on);
+void displayChargeStatus(int battery_discharging, int battery_full);
 void displayLeds(int red, int yellow, int green);
 void pressEvent(XButtonEvent *xev);
 
 /*  
  *   main  
  */
-int main(int argc, char *argv[]) {
+int main() {
   
   // BEGIN hardcoded test params
-  int     ac_line_status     = 1;
-  int     battery_status     = 3;   // Battery charging, 2 = critical, 1 = low, 3 = charged
   int     battery_time       = 2000; // Remaining time in minutes
-  int     battery_percentage = 0;
   // END hardcoded test params
-
-  XEvent  event;
+  
+  battery_info res;
+  XEvent       event;
 
   // Init the base window    
   openXwindow(argc, argv, wmapm_master, wmapm_mask_bits, wmapm_mask_width, wmapm_mask_height);
 
   while (1) {
-    battery_info res = get_battery_info(fopen("/sys/class/power_supply/BAT1/uevent", "r"));
+    res = get_battery_info(fopen("/sys/class/power_supply/BAT1/uevent", "r"));
 
     displayGraph(res.percent);
-    displayChargeStatus(!res.discharging);
+    displayChargeStatus(res.discharging, res.full);
     displayTime(battery_time);
     displayLeds(1, 1, 1); 
-
-    battery_percentage == 100 ? (battery_percentage = 0) : (battery_percentage++);
 
     // Process pending X events
     while (XPending(display)) {
@@ -141,23 +137,25 @@ void displayGraph(int percent) {
     int k = percent * 49 / 100;
     copyXPMArea(66, 42, k, 9, 7, 21);
         
-    (k % 2) ? copyXPMArea(66+k-1, 52, 1, 9, 7+k-1, 21) :  copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
+    (k % 2) ? copyXPMArea(66+k-1, 52, 1, 9, 7+k-1, 21) : copyXPMArea(66+k, 52, 1, 9, 7+k, 21);
   }
 }
 
 /*
  *  displayChargeStatus() -- Display whether we're charging or discharging
  */
-void displayChargeStatus(int ac_line_on) {
-  if ( ac_line_on ) { // Battery is charging
-    copyXPMArea(68,  6, 26, 7, 31, 35); // AC line symbol on
-    copyXPMArea(98,  6, 5, 7,  6,  7);  // "bright C" charge status
-    copyXPMArea(75, 81, 1, 2, 17,  9);  // Change default + to -
-    copyXPMArea(75, 81, 1, 2, 17, 12);  // Change default + to -
-  } else {
+void displayChargeStatus(int battery_discharging, int battery_full) {
+  if ( battery_discharging ) {          // Battery is providing power
     copyXPMArea(68, 20, 26, 7, 31, 35); // Battery symbol on
     copyXPMArea(104, 6,  5, 7,  6, 7);  // Default "dim C" charge status
     copyXPMArea(83, 93, 41, 9, 15, 7);  // Default +00:00 time
+  } else {
+    copyXPMArea(68,  6, 26, 7, 31, 35); // AC line symbol on
+    copyXPMArea(75, 81, 1, 2, 17,  9);  // Change default + to -
+    copyXPMArea(75, 81, 1, 2, 17, 12);  // Change default + to -
+    
+    if ( !battery_full )
+      copyXPMArea(98,  6, 5, 7,  6,  7);// "bright C" charge status
   }
 }
 
