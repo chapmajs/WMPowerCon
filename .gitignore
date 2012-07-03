@@ -13,4 +13,4 @@
 *.o
 
 #ignore the binary too
-wmpowercon
+wmpowercon/wmpowercon
