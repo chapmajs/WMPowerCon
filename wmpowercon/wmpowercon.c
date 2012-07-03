@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
   
     // Redraw and wait for next update 
     RedrawWindow();
-    usleep(1000);
+    usleep(100000);
   }
 }
 
