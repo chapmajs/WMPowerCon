@@ -53,7 +53,7 @@ void pressEvent(XButtonEvent *xev);
 /*  
  *   main  
  */
-int main() {
+int main(int argc, char *argv[]) {
   
   // BEGIN hardcoded test params
   int     battery_time       = 2000; // Remaining time in minutes
