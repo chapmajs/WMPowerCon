@@ -15,9 +15,8 @@ battery_info get_battery_info(FILE *sysfs_bat_fp) {
   fileLen = ftell(sysfs_bat_fp);
   rewind(sysfs_bat_fp);
 
-  buf = calloc(fileLen + 1, sizeof(char));
+  buf = malloc(((fileLen + 1) * sizeof(char)));
   fread(buf, fileLen, 1, sysfs_bat_fp);
-  line = calloc(255, sizeof(char));
   line = strtok( buf, "\n" );
 
   while (line != NULL) {
